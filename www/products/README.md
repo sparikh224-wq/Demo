@@ -12,6 +12,7 @@ image here named by the product's id — no code changes needed:
 | 4  | Vedica Sparkling Water | `4.jpg`       |
 | 5  | Diet Coke              | `5.jpg`       |
 | 6  | Schweppes Tonic Water  | `6.jpg`       |
+| 7  | Salt & Pepper Makhana  | `7.jpg`       |
 
 Use a square-ish image with a white/transparent background for the best look.
 If a file is missing, the app automatically falls back to the vector art, so

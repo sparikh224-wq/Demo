@@ -249,7 +249,7 @@
     </div>
 
     <div class="sec-head">
-      <h3>Beverages & Coolers</h3>
+      <h3>Drinks & Snacks</h3>
       <span>See all ›</span>
     </div>
 
@@ -353,11 +353,11 @@ function BOTTLE(body, cap, band, lines){
 }
 
 const PRODUCTS = [
-  {id:1, name:"Coca-Cola Zero Sugar", qty:"300 ml · Can", price:40, mrp:45, rate:"4.6 (18k)", tag:"Bestseller",
-    art:CAN("#121212","#3a3a3a","#e3001b",[{t:"Coca-Cola",c:"#fff",s:9},{t:"ZERO",c:"#fff",s:14}])},
-  {id:2, name:"Red Bull Sugarfree", qty:"250 ml · Can", price:125, mrp:135, rate:"4.7 (90k)", tag:"Imported",
-    art:CAN("#b9bfc7","#8a9099","#0a2a6b",[{t:"RED BULL",c:"#fff",s:9},{t:"SUGARFREE",c:"#ffd400",s:7}])},
-  {id:3, name:"Red Bull Energy", qty:"250 ml · Can", price:125, mrp:135, rate:"4.6 (22k)", tag:"Imported",
+  {id:1, name:"Coca-Cola Zero Sugar", qty:"300 ml · Can", price:40, mrp:45, rate:"4.6 (18k)", tag:"Chilled",
+    art:CAN("#e3001b","#d7dadd","#c0001a",[{t:"Coca-Cola",c:"#fff",s:9},{t:"ZERO SUGAR",c:"#fff",s:8}])},
+  {id:2, name:"Red Bull Sugarfree", qty:"250 ml · Can", price:125, mrp:135, rate:"4.7 (90k)", tag:"Chilled",
+    art:CAN("#cfe2f2","#b9c0c8","#ffffff",[{t:"Red Bull",c:"#d3122a",s:10},{t:"SUGARFREE",c:"#2b6cb0",s:7}])},
+  {id:3, name:"Red Bull Energy", qty:"250 ml · Can", price:125, mrp:135, rate:"4.6 (22k)", tag:"Chilled",
     art:CAN("#c4c9d0","#8a9099","#0a2a6b",[{t:"RED BULL",c:"#fff",s:9},{t:"ENERGY",c:"#ffd400",s:8}])},
   {id:4, name:"Vedica Sparkling Water", qty:"300 ml · Glass", price:127, mrp:175, rate:"4.5 (2k)", tag:"Chilled",
     art:BOTTLE("#bfe4f2","#1b6fb3","#1b6fb3",[{t:"VEDICA",c:"#fff",s:9},{t:"SPARKLING",c:"#cdeafb",s:6}])},
@@ -365,6 +365,8 @@ const PRODUCTS = [
     art:CAN("#d7dbe0","#aeb4ba","#e6e9ec",[{t:"Diet",c:"#cc0a1e",s:11},{t:"Coke",c:"#cc0a1e",s:11}])},
   {id:6, name:"Schweppes Tonic Water", qty:"300 ml · Can", price:55, mrp:60, rate:"4.4 (3k)", tag:"",
     art:CAN("#f2c200","#caa100","#0a3d62",[{t:"Schweppes",c:"#ffd84d",s:8},{t:"TONIC",c:"#fff",s:9}])},
+  {id:7, name:"Salt & Pepper Makhana", qty:"77 g · Tin", price:188, mrp:239, rate:"4.6 (5k)", tag:"Fasting",
+    art:CAN("#6f747b","#1c1c1c","#3f444b",[{t:"MAKHANA",c:"#fff",s:9},{t:"Salt & Pepper",c:"#d7dadd",s:6}])},
 ];
 
 const cart = {}; // id -> count

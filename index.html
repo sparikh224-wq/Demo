@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoWingo — Delivery Solutions</title>
+<style>
+  :root{
+    --cyan:#29B6D8;
+    --cyan-dark:#1f9ab8;
+    --ink:#16181d;
+    --ink-soft:#3a3f47;
+    --muted:#8a9099;
+    --line:#eef0f3;
+    --bg:#f6f8f9;
+    --green:#3a7d44;
+    --card:#ffffff;
+    --radius:16px;
+    --shadow:0 8px 30px rgba(20,24,29,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#d9dee2;
+    color:var(--ink);
+    display:flex;justify-content:center;
+    min-height:100vh;
+  }
+  /* phone frame */
+  .phone{
+    width:100%;max-width:430px;
+    background:var(--bg);
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 0 60px rgba(0,0,0,.25);
+    display:flex;flex-direction:column;
+  }
+  .page{display:none;flex-direction:column;flex:1;min-height:100vh;}
+  .page.active{display:flex;}
+
+  /* ---------- HEADER ---------- */
+  .topbar{
+    background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan-dark) 100%);
+    color:#fff;padding:14px 16px 16px;
+    position:sticky;top:0;z-index:20;
+  }
+  .topbar-row{display:flex;align-items:center;gap:12px;}
+  .logo-wrap{display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:46px;height:46px;flex:none;}
+  .brand{line-height:1;}
+  .brand .deliver{font-size:11px;font-weight:600;opacity:.92;letter-spacing:.5px;}
+  .brand .time{font-size:20px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:6px;}
+  .addr{margin-top:12px;font-size:12.5px;display:flex;align-items:center;gap:6px;opacity:.95;}
+  .addr b{font-weight:700;}
+  .profile{margin-left:auto;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;font-weight:700;border:1.5px solid rgba(255,255,255,.4);}
+  .search{
+    margin-top:14px;background:#fff;border-radius:12px;display:flex;align-items:center;
+    gap:10px;padding:12px 14px;color:var(--muted);font-size:14px;font-weight:500;
+  }
+  .search svg{flex:none;}
+
+  /* ---------- HERO BANNER ---------- */
+  .hero{
+    margin:14px 14px 4px;border-radius:var(--radius);
+    background:linear-gradient(120deg,#16181d 0%,#23282f 100%);
+    color:#fff;padding:18px 18px;position:relative;overflow:hidden;
+  }
+  .hero .badge{display:inline-block;background:var(--cyan);color:#06222a;font-size:10px;
+    font-weight:800;padding:4px 9px;border-radius:20px;letter-spacing:.6px;}
+  .hero h2{font-size:22px;font-weight:800;margin-top:10px;letter-spacing:-.4px;line-height:1.15;}
+  .hero p{font-size:12.5px;opacity:.8;margin-top:4px;}
+  .hero .drone-deco{position:absolute;right:-8px;bottom:-10px;opacity:.25;}
+
+  /* ---------- SECTION ---------- */
+  .sec-head{display:flex;align-items:center;justify-content:space-between;
+    padding:18px 16px 8px;}
+  .sec-head h3{font-size:17px;font-weight:800;letter-spacing:-.3px;}
+  .sec-head span{font-size:12px;color:var(--cyan-dark);font-weight:700;}
+
+  /* ---------- PRODUCT GRID ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 14px 120px;}
+  .card{
+    background:var(--card);border-radius:14px;padding:10px;
+    display:flex;flex-direction:column;box-shadow:0 2px 10px rgba(20,24,29,.05);
+    border:1px solid #f0f2f4;position:relative;
+  }
+  .tag{position:absolute;top:8px;left:8px;background:#eef7fb;color:var(--cyan-dark);
+    font-size:9px;font-weight:800;padding:3px 7px;border-radius:6px;letter-spacing:.3px;}
+  .veg{position:absolute;top:8px;right:8px;width:16px;height:16px;border:1.5px solid var(--green);
+    border-radius:3px;display:flex;align-items:center;justify-content:center;background:#fff;}
+  .veg::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);}
+  .pimg{height:110px;display:flex;align-items:center;justify-content:center;margin:6px 0 8px;}
+  .pimg .can{font-size:64px;line-height:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.12));}
+  .qty-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px;}
+  .pname{font-size:13px;font-weight:700;line-height:1.25;min-height:33px;color:var(--ink);}
+  .rate{font-size:10.5px;color:var(--muted);margin:5px 0 8px;display:flex;align-items:center;gap:4px;}
+  .star{color:#f5a623;}
+  .price-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;gap:6px;}
+  .price{font-size:15px;font-weight:800;}
+  .price small{font-size:11px;color:var(--muted);text-decoration:line-through;font-weight:600;margin-left:4px;}
+
+  /* ADD button + stepper */
+  .add-btn{
+    border:1.5px solid var(--cyan);color:var(--cyan-dark);background:#f3fbfd;
+    font-weight:800;font-size:13px;padding:8px 16px;border-radius:10px;cursor:pointer;
+    letter-spacing:.5px;transition:transform .06s;
+  }
+  .add-btn:active{transform:scale(.94);}
+  .stepper{display:flex;align-items:center;background:var(--cyan);border-radius:10px;overflow:hidden;}
+  .stepper button{background:none;border:none;color:#fff;font-size:18px;font-weight:700;
+    width:30px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .stepper span{color:#fff;font-weight:800;font-size:14px;min-width:18px;text-align:center;}
+
+  /* ---------- CART BAR ---------- */
+  .cartbar{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+    width:100%;max-width:430px;padding:12px 14px 16px;z-index:30;
+    pointer-events:none;
+  }
+  .cartbar-inner{
+    background:var(--cyan);color:#fff;border-radius:14px;padding:12px 16px;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 10px 30px rgba(41,182,216,.45);cursor:pointer;pointer-events:auto;
+    transform:translateY(120px);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  }
+  .cartbar.show .cartbar-inner{transform:translateY(0);}
+  .cartbar-left{display:flex;align-items:center;gap:12px;}
+  .cartbar .ic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.18);
+    display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .cartbar .meta b{font-size:14px;font-weight:800;display:block;}
+  .cartbar .meta span{font-size:11.5px;opacity:.9;}
+  .cartbar .go{display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;}
+
+  /* ---------- CART PAGE ---------- */
+  .cart-head{
+    background:#fff;padding:14px 16px;display:flex;align-items:center;gap:14px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;
+  }
+  .back{width:34px;height:34px;border-radius:50%;background:var(--bg);border:none;
+    font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .cart-head h3{font-size:17px;font-weight:800;}
+  .cart-head p{font-size:11.5px;color:var(--muted);}
+
+  .eta{margin:14px;background:#eef7fb;border:1px solid #d6eef5;border-radius:14px;
+    padding:14px 16px;display:flex;align-items:center;gap:12px;}
+  .eta .pin{width:40px;height:40px;border-radius:11px;background:var(--cyan);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+  .eta b{font-size:14px;}.eta span{font-size:12px;color:var(--ink-soft);}
+
+  .cart-items{margin:0 14px;background:#fff;border-radius:14px;padding:6px 14px;box-shadow:var(--shadow);}
+  .citem{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .citem:last-child{border-bottom:none;}
+  .citem .ci-img{font-size:34px;width:46px;text-align:center;flex:none;}
+  .citem .ci-info{flex:1;}
+  .citem .ci-info b{font-size:13.5px;font-weight:700;display:block;line-height:1.2;}
+  .citem .ci-info span{font-size:11px;color:var(--muted);}
+  .citem .ci-price{font-weight:800;font-size:13.5px;margin-left:4px;white-space:nowrap;}
+  .citem .stepper{transform:scale(.9);}
+
+  .bill{margin:14px;background:#fff;border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+  .bill h4{font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink-soft);
+    text-transform:uppercase;letter-spacing:.5px;}
+  .bline{display:flex;justify-content:space-between;font-size:13px;margin:9px 0;color:var(--ink-soft);}
+  .bline.free{color:var(--green);font-weight:700;}
+  .bline.total{border-top:1px dashed var(--line);margin-top:12px;padding-top:12px;
+    font-size:16px;font-weight:800;color:var(--ink);}
+  .empty{padding:80px 30px;text-align:center;color:var(--muted);}
+  .empty .big{font-size:60px;opacity:.5;}
+  .empty p{margin-top:12px;font-size:14px;}
+
+  /* ---------- CHECKOUT BAR ---------- */
+  .checkout-bar{position:sticky;bottom:0;padding:14px;background:linear-gradient(#f6f8f9aa,#f6f8f9);}
+  .place-btn{
+    width:100%;background:var(--cyan);color:#fff;border:none;border-radius:14px;
+    padding:16px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.3px;
+    box-shadow:0 10px 26px rgba(41,182,216,.4);display:flex;align-items:center;
+    justify-content:space-between;transition:transform .06s;
+  }
+  .place-btn:active{transform:scale(.98);}
+  .place-btn .amt{font-size:17px;}
+
+  /* ---------- SUCCESS OVERLAY ---------- */
+  .success{
+    position:fixed;inset:0;background:rgba(15,17,21,.55);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:24px;
+  }
+  .success.show{display:flex;}
+  .success-card{background:#fff;border-radius:24px;padding:34px 26px;text-align:center;
+    max-width:340px;width:100%;animation:pop .4s cubic-bezier(.2,.9,.3,1.2);}
+  @keyframes pop{0%{transform:scale(.7);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  .check-ring{width:92px;height:92px;border-radius:50%;background:#eef7fb;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;position:relative;}
+  .check-ring .drone{font-size:46px;animation:fly 2s ease-in-out infinite;}
+  @keyframes fly{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-7px) rotate(4deg);}}
+  .success-card h2{font-size:22px;font-weight:800;color:var(--ink);}
+  .success-card p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .success-card .oeta{margin:18px 0;background:#eef7fb;border-radius:12px;padding:12px;
+    font-size:13px;font-weight:700;color:var(--cyan-dark);}
+  .success-card button{width:100%;background:var(--ink);color:#fff;border:none;border-radius:12px;
+    padding:14px;font-weight:800;font-size:15px;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ================= HOME / PRODUCTS ================= -->
+  <div class="page active" id="home">
+    <div class="topbar">
+      <div class="topbar-row">
+        <div class="logo-wrap">
+          <!-- GoWingo drone logo -->
+          <svg class="logo-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#fff"/>
+            <!-- propellers -->
+            <ellipse cx="24" cy="34" rx="15" ry="4" fill="#29B6D8"/>
+            <ellipse cx="76" cy="34" rx="15" ry="4" fill="#29B6D8"/>
+            <circle cx="24" cy="34" r="4" fill="#16181d"/>
+            <circle cx="76" cy="34" r="4" fill="#16181d"/>
+            <!-- wings -->
+            <path d="M50 50 L20 40 L30 50 L20 60 Z" fill="#16181d"/>
+            <path d="M50 50 L80 40 L70 50 L80 60 Z" fill="#16181d"/>
+            <!-- W body -->
+            <path d="M38 44 L44 64 L50 50 L56 64 L62 44 L57 44 L53 56 L50 46 L47 56 L43 44 Z" fill="#16181d"/>
+          </svg>
+          <div class="brand">
+            <div class="deliver">DELIVERY IN</div>
+            <div class="time">12 mins ⚡</div>
+          </div>
+        </div>
+        <div class="profile">JK</div>
+      </div>
+      <div class="addr">📍 <b>Home</b> — Rotak Sector 4, JK Aerotech Campus ▾</div>
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a9099" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Search "Coca Cola Zero"…
+      </div>
+    </div>
+
+    <div class="hero">
+      <span class="badge">⚡ DRONE EXPRESS</span>
+      <h2>Cold drinks,<br>delivered in minutes.</h2>
+      <p>Min. 20% off on summer coolers</p>
+      <svg class="drone-deco" width="120" height="80" viewBox="0 0 100 100" fill="#29B6D8">
+        <ellipse cx="24" cy="34" rx="15" ry="4"/><ellipse cx="76" cy="34" rx="15" ry="4"/>
+        <path d="M50 50 L20 40 L30 50 L20 60 Z M50 50 L80 40 L70 50 L80 60 Z" fill="#fff"/>
+      </svg>
+    </div>
+
+    <div class="sec-head">
+      <h3>Beverages & Coolers</h3>
+      <span>See all ›</span>
+    </div>
+
+    <div class="grid" id="grid"><!-- products injected --></div>
+  </div>
+
+  <!-- ================= CART / ORDER ================= -->
+  <div class="page" id="cart">
+    <div class="cart-head">
+      <button class="back" onclick="showPage('home')">‹</button>
+      <div>
+        <h3>Your Cart</h3>
+        <p id="cart-sub">0 items</p>
+      </div>
+    </div>
+
+    <div class="eta">
+      <div class="pin">🚁</div>
+      <div>
+        <b>Delivery in 12 minutes</b><br>
+        <span>Shipped via GoWingo drone to your doorstep</span>
+      </div>
+    </div>
+
+    <div id="cart-body">
+      <div class="cart-items" id="cart-items"></div>
+      <div class="bill">
+        <h4>Bill Details</h4>
+        <div class="bline"><span>Item total</span><span id="bill-items">₹0</span></div>
+        <div class="bline free"><span>Delivery fee</span><span>FREE</span></div>
+        <div class="bline"><span>Handling charge</span><span>₹9</span></div>
+        <div class="bline total"><span>To Pay</span><span id="bill-total">₹0</span></div>
+      </div>
+    </div>
+
+    <div class="checkout-bar" id="checkout-bar">
+      <button class="place-btn" onclick="placeOrder()">
+        <span>Place Order</span>
+        <span class="amt" id="place-amt">₹0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- floating cart bar (home page) -->
+  <div class="cartbar" id="cartbar" onclick="showPage('cart')">
+    <div class="cartbar-inner">
+      <div class="cartbar-left">
+        <div class="ic">🛒</div>
+        <div class="meta">
+          <b id="cb-count">0 items</b>
+          <span id="cb-total">₹0</span>
+        </div>
+      </div>
+      <div class="go">View cart ›</div>
+    </div>
+  </div>
+
+  <!-- success overlay -->
+  <div class="success" id="success">
+    <div class="success-card">
+      <div class="check-ring"><div class="drone">🚁</div></div>
+      <h2>Order Placed!</h2>
+      <p>Your GoWingo drone is being loaded and will take off shortly.</p>
+      <div class="oeta">🕒 Arriving in ~12 minutes</div>
+      <button onclick="resetApp()">Back to Home</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PRODUCTS = [
+  {id:1, name:"Coca-Cola Zero Sugar", qty:"300 ml · Can", price:40, mrp:45, rate:"4.6 (18k)", icon:"🥤", tag:"Bestseller"},
+  {id:2, name:"Red Bull Sugarfree", qty:"250 ml · Can", price:125, mrp:135, rate:"4.7 (90k)", icon:"🧃", tag:"Imported"},
+  {id:3, name:"Red Bull Zero", qty:"250 ml · Can", price:125, mrp:135, rate:"4.6 (22k)", icon:"🥫", tag:"Imported"},
+  {id:4, name:"Bisleri Sparkling Water", qty:"750 ml · Bottle", price:35, mrp:40, rate:"4.5 (9k)", icon:"💧", tag:"Chilled"},
+  {id:5, name:"Diet Coke", qty:"330 ml · Can", price:40, mrp:45, rate:"4.5 (12k)", icon:"🥤", tag:""},
+  {id:6, name:"Schweppes Tonic Water", qty:"300 ml · Can", price:55, mrp:60, rate:"4.4 (3k)", icon:"🍸", tag:""},
+];
+
+const cart = {}; // id -> count
+
+function money(n){return "₹"+n;}
+
+function renderGrid(){
+  const g = document.getElementById('grid');
+  g.innerHTML = PRODUCTS.map(p=>{
+    const c = cart[p.id]||0;
+    const ctrl = c>0
+      ? `<div class="stepper">
+           <button onclick="dec(${p.id})">−</button>
+           <span id="st-${p.id}">${c}</span>
+           <button onclick="inc(${p.id})">+</button>
+         </div>`
+      : `<button class="add-btn" onclick="inc(${p.id})">ADD</button>`;
+    return `
+    <div class="card">
+      ${p.tag?`<div class="tag">${p.tag}</div>`:''}
+      <div class="veg"></div>
+      <div class="pimg"><div class="can">${p.icon}</div></div>
+      <div class="qty-label">${p.qty}</div>
+      <div class="pname">${p.name}</div>
+      <div class="rate"><span class="star">★</span>${p.rate}</div>
+      <div class="price-row">
+        <div class="price">${money(p.price)}<small>${money(p.mrp)}</small></div>
+        <div id="ctrl-${p.id}">${ctrl}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function inc(id){cart[id]=(cart[id]||0)+1;refresh();}
+function dec(id){if(cart[id]){cart[id]--;if(cart[id]<=0)delete cart[id];}refresh();}
+
+function totals(){
+  let items=0,amount=0;
+  for(const id in cart){
+    const p=PRODUCTS.find(x=>x.id==id);
+    items+=cart[id];amount+=p.price*cart[id];
+  }
+  return {items,amount};
+}
+
+function refresh(){
+  renderGrid();
+  const {items,amount}=totals();
+  // floating bar
+  const bar=document.getElementById('cartbar');
+  if(items>0){
+    bar.classList.add('show');
+    document.getElementById('cb-count').textContent=items+(items>1?" items":" item");
+    document.getElementById('cb-total').textContent=money(amount);
+  }else{
+    bar.classList.remove('show');
+  }
+  renderCart();
+}
+
+function renderCart(){
+  const {items,amount}=totals();
+  document.getElementById('cart-sub').textContent=items+(items>1?" items":" item");
+  const body=document.getElementById('cart-body');
+  const bar=document.getElementById('checkout-bar');
+  const list=document.getElementById('cart-items');
+
+  if(items===0){
+    list.innerHTML='';
+    body.innerHTML='<div class="empty"><div class="big">🛒</div><p>Your cart is empty.<br>Add some cold drinks!</p></div>';
+    bar.style.display='none';
+    return;
+  }
+  bar.style.display='block';
+  // rebuild body structure if it was emptied
+  if(!document.getElementById('cart-items')){
+    body.innerHTML=`<div class="cart-items" id="cart-items"></div>
+      <div class="bill">
+        <h4>Bill Details</h4>
+        <div class="bline"><span>Item total</span><span id="bill-items"></span></div>
+        <div class="bline free"><span>Delivery fee</span><span>FREE</span></div>
+        <div class="bline"><span>Handling charge</span><span>₹9</span></div>
+        <div class="bline total"><span>To Pay</span><span id="bill-total"></span></div>
+      </div>`;
+  }
+  document.getElementById('cart-items').innerHTML = Object.keys(cart).map(id=>{
+    const p=PRODUCTS.find(x=>x.id==id);const c=cart[id];
+    return `<div class="citem">
+      <div class="ci-img">${p.icon}</div>
+      <div class="ci-info"><b>${p.name}</b><span>${p.qty}</span></div>
+      <div class="stepper">
+        <button onclick="dec(${p.id})">−</button>
+        <span>${c}</span>
+        <button onclick="inc(${p.id})">+</button>
+      </div>
+      <div class="ci-price">${money(p.price*c)}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('bill-items').textContent=money(amount);
+  document.getElementById('bill-total').textContent=money(amount+9);
+  document.getElementById('place-amt').textContent=money(amount+9);
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('cartbar').style.display = id==='home' ? 'block':'none';
+  window.scrollTo(0,0);
+}
+
+function placeOrder(){
+  if(totals().items===0)return;
+  document.getElementById('success').classList.add('show');
+}
+
+function resetApp(){
+  for(const k in cart)delete cart[k];
+  document.getElementById('success').classList.remove('show');
+  refresh();
+  showPage('home');
+}
+
+refresh();
+</script>
+</body>
+</html>

@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="GoWingo">
-<link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="gowingo-logo.png">
+<link rel="icon" href="gowingo-logo.png">
 <style>
   :root{
     --cyan:#29B6D8;
@@ -56,7 +56,8 @@
   }
   .topbar-row{display:flex;align-items:center;gap:12px;}
   .logo-wrap{display:flex;align-items:center;gap:10px;}
-  .logo-mark{width:46px;height:46px;flex:none;}
+  .logo-mark{width:52px;height:52px;flex:none;background:#fff;border-radius:12px;
+    padding:4px;object-fit:contain;box-shadow:0 2px 10px rgba(0,0,0,.15);}
   .brand{line-height:1;}
   .brand .deliver{font-size:11px;font-weight:600;opacity:.92;letter-spacing:.5px;}
   .brand .time{font-size:20px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:6px;}
@@ -100,8 +101,9 @@
   .veg{position:absolute;top:8px;right:8px;width:16px;height:16px;border:1.5px solid var(--green);
     border-radius:3px;display:flex;align-items:center;justify-content:center;background:#fff;}
   .veg::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);}
-  .pimg{height:110px;display:flex;align-items:center;justify-content:center;margin:6px 0 8px;}
-  .pimg .can{font-size:64px;line-height:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.12));}
+  .pimg{height:112px;position:relative;display:flex;align-items:center;justify-content:center;margin:6px 0 8px;}
+  .pimg .art{height:108px;width:auto;filter:drop-shadow(0 7px 9px rgba(0,0,0,.16));}
+  .pphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;}
   .qty-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px;}
   .pname{font-size:13px;font-weight:700;line-height:1.25;min-height:33px;color:var(--ink);}
   .rate{font-size:10.5px;color:var(--muted);margin:5px 0 8px;display:flex;align-items:center;gap:4px;}
@@ -161,7 +163,9 @@
   .cart-items{margin:0 14px;background:#fff;border-radius:14px;padding:6px 14px;box-shadow:var(--shadow);}
   .citem{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);}
   .citem:last-child{border-bottom:none;}
-  .citem .ci-img{font-size:34px;width:46px;text-align:center;flex:none;}
+  .citem .ci-img{width:46px;height:54px;position:relative;flex:none;display:flex;align-items:center;justify-content:center;}
+  .citem .ci-img .art{height:50px;width:auto;}
+  .citem .ci-img .pphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;}
   .citem .ci-info{flex:1;}
   .citem .ci-info b{font-size:13.5px;font-weight:700;display:block;line-height:1.2;}
   .citem .ci-info span{font-size:11px;color:var(--muted);}
@@ -219,23 +223,10 @@
     <div class="topbar">
       <div class="topbar-row">
         <div class="logo-wrap">
-          <!-- GoWingo drone logo -->
-          <svg class="logo-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="48" fill="#fff"/>
-            <!-- propellers -->
-            <ellipse cx="24" cy="34" rx="15" ry="4" fill="#29B6D8"/>
-            <ellipse cx="76" cy="34" rx="15" ry="4" fill="#29B6D8"/>
-            <circle cx="24" cy="34" r="4" fill="#16181d"/>
-            <circle cx="76" cy="34" r="4" fill="#16181d"/>
-            <!-- wings -->
-            <path d="M50 50 L20 40 L30 50 L20 60 Z" fill="#16181d"/>
-            <path d="M50 50 L80 40 L70 50 L80 60 Z" fill="#16181d"/>
-            <!-- W body -->
-            <path d="M38 44 L44 64 L50 50 L56 64 L62 44 L57 44 L53 56 L50 46 L47 56 L43 44 Z" fill="#16181d"/>
-          </svg>
+          <img class="logo-mark" src="gowingo-logo.png" alt="GoWingo">
           <div class="brand">
             <div class="deliver">DELIVERY IN</div>
-            <div class="time">12 mins ⚡</div>
+            <div class="time">8 mins ⚡</div>
           </div>
         </div>
         <div class="profile">JK</div>
@@ -278,7 +269,7 @@
     <div class="eta">
       <div class="pin">🚁</div>
       <div>
-        <b>Delivery in 12 minutes</b><br>
+        <b>Delivery in 8 minutes</b><br>
         <span>Shipped via GoWingo drone to your doorstep</span>
       </div>
     </div>
@@ -322,7 +313,7 @@
       <div class="check-ring"><div class="drone">🚁</div></div>
       <h2>Order Placed!</h2>
       <p>Your GoWingo drone is being loaded and will take off shortly.</p>
-      <div class="oeta">🕒 Arriving in ~12 minutes</div>
+      <div class="oeta">🕒 Arriving in ~8 minutes</div>
       <button onclick="resetApp()">Back to Home</button>
     </div>
   </div>
@@ -330,13 +321,50 @@
 </div>
 
 <script>
+// Brand-accurate vector art (renders everywhere, no network).
+// Drop a real photo at products/<id>.jpg|png to auto-override any item.
+function CAN(body, lid, band, lines){
+  const txt = lines.map((l,i)=>`<text x="40" y="${61+i*13}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="${l.s}" letter-spacing="-.4" fill="${l.c}">${l.t}</text>`).join('');
+  return `<svg class="art" viewBox="0 0 80 122" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="110" rx="24" ry="7" fill="${lid}"/>
+    <rect x="16" y="12" width="48" height="98" fill="${body}"/>
+    <rect x="22" y="12" width="6" height="98" fill="#fff" opacity=".18"/>
+    <rect x="55" y="12" width="4" height="98" fill="#000" opacity=".12"/>
+    <rect x="16" y="44" width="48" height="38" fill="${band}"/>
+    <ellipse cx="40" cy="12" rx="24" ry="7" fill="${lid}"/>
+    <ellipse cx="40" cy="11" rx="20" ry="5" fill="#e9edf0"/>
+    <ellipse cx="40" cy="11" rx="13" ry="3" fill="#cfd5da"/>
+    ${txt}
+  </svg>`;
+}
+function BOTTLE(body, cap, band, lines){
+  const txt = lines.map((l,i)=>`<text x="40" y="${72+i*12}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="${l.s}" letter-spacing="-.3" fill="${l.c}">${l.t}</text>`).join('');
+  return `<svg class="art" viewBox="0 0 80 122" xmlns="http://www.w3.org/2000/svg">
+    <rect x="34" y="3" width="12" height="8" rx="1.5" fill="${cap}"/>
+    <rect x="35" y="11" width="10" height="10" fill="${body}"/>
+    <rect x="22" y="20" width="36" height="94" rx="15" fill="${body}"/>
+    <rect x="27" y="25" width="5" height="84" rx="2.5" fill="#fff" opacity=".4"/>
+    <circle cx="46" cy="34" r="2" fill="#fff" opacity=".55"/>
+    <circle cx="36" cy="44" r="1.6" fill="#fff" opacity=".5"/>
+    <circle cx="48" cy="50" r="1.4" fill="#fff" opacity=".5"/>
+    <rect x="22" y="62" width="36" height="32" fill="${band}"/>
+    ${txt}
+  </svg>`;
+}
+
 const PRODUCTS = [
-  {id:1, name:"Coca-Cola Zero Sugar", qty:"300 ml · Can", price:40, mrp:45, rate:"4.6 (18k)", icon:"🥤", tag:"Bestseller"},
-  {id:2, name:"Red Bull Sugarfree", qty:"250 ml · Can", price:125, mrp:135, rate:"4.7 (90k)", icon:"🧃", tag:"Imported"},
-  {id:3, name:"Red Bull Zero", qty:"250 ml · Can", price:125, mrp:135, rate:"4.6 (22k)", icon:"🥫", tag:"Imported"},
-  {id:4, name:"Bisleri Sparkling Water", qty:"750 ml · Bottle", price:35, mrp:40, rate:"4.5 (9k)", icon:"💧", tag:"Chilled"},
-  {id:5, name:"Diet Coke", qty:"330 ml · Can", price:40, mrp:45, rate:"4.5 (12k)", icon:"🥤", tag:""},
-  {id:6, name:"Schweppes Tonic Water", qty:"300 ml · Can", price:55, mrp:60, rate:"4.4 (3k)", icon:"🍸", tag:""},
+  {id:1, name:"Coca-Cola Zero Sugar", qty:"300 ml · Can", price:40, mrp:45, rate:"4.6 (18k)", tag:"Bestseller",
+    art:CAN("#121212","#3a3a3a","#e3001b",[{t:"Coca-Cola",c:"#fff",s:9},{t:"ZERO",c:"#fff",s:14}])},
+  {id:2, name:"Red Bull Sugarfree", qty:"250 ml · Can", price:125, mrp:135, rate:"4.7 (90k)", tag:"Imported",
+    art:CAN("#b9bfc7","#8a9099","#0a2a6b",[{t:"RED BULL",c:"#fff",s:9},{t:"SUGARFREE",c:"#ffd400",s:7}])},
+  {id:3, name:"Red Bull Energy", qty:"250 ml · Can", price:125, mrp:135, rate:"4.6 (22k)", tag:"Imported",
+    art:CAN("#c4c9d0","#8a9099","#0a2a6b",[{t:"RED BULL",c:"#fff",s:9},{t:"ENERGY",c:"#ffd400",s:8}])},
+  {id:4, name:"Vedica Sparkling Water", qty:"300 ml · Glass", price:127, mrp:175, rate:"4.5 (2k)", tag:"Chilled",
+    art:BOTTLE("#bfe4f2","#1b6fb3","#1b6fb3",[{t:"VEDICA",c:"#fff",s:9},{t:"SPARKLING",c:"#cdeafb",s:6}])},
+  {id:5, name:"Diet Coke", qty:"300 ml · Can", price:40, mrp:45, rate:"4.5 (12k)", tag:"",
+    art:CAN("#d7dbe0","#aeb4ba","#e6e9ec",[{t:"Diet",c:"#cc0a1e",s:11},{t:"Coke",c:"#cc0a1e",s:11}])},
+  {id:6, name:"Schweppes Tonic Water", qty:"300 ml · Can", price:55, mrp:60, rate:"4.4 (3k)", tag:"",
+    art:CAN("#f2c200","#caa100","#0a3d62",[{t:"Schweppes",c:"#ffd84d",s:8},{t:"TONIC",c:"#fff",s:9}])},
 ];
 
 const cart = {}; // id -> count
@@ -358,7 +386,7 @@ function renderGrid(){
     <div class="card">
       ${p.tag?`<div class="tag">${p.tag}</div>`:''}
       <div class="veg"></div>
-      <div class="pimg"><div class="can">${p.icon}</div></div>
+      <div class="pimg"><img class="pphoto" src="products/${p.id}.jpg" alt="${p.name}" onerror="this.onerror=null;this.remove();">${p.art}</div>
       <div class="qty-label">${p.qty}</div>
       <div class="pname">${p.name}</div>
       <div class="rate"><span class="star">★</span>${p.rate}</div>
@@ -425,7 +453,7 @@ function renderCart(){
   document.getElementById('cart-items').innerHTML = Object.keys(cart).map(id=>{
     const p=PRODUCTS.find(x=>x.id==id);const c=cart[id];
     return `<div class="citem">
-      <div class="ci-img">${p.icon}</div>
+      <div class="ci-img"><img class="pphoto" src="products/${p.id}.jpg" alt="${p.name}" onerror="this.onerror=null;this.remove();">${p.art}</div>
       <div class="ci-info"><b>${p.name}</b><span>${p.qty}</span></div>
       <div class="stepper">
         <button onclick="dec(${p.id})">−</button>

@@ -1,5 +1,5 @@
-const CACHE = 'gowingo-v1';
-const ASSETS = ['index.html', 'manifest.webmanifest', 'icon.svg'];
+const CACHE = 'gowingo-v2';
+const ASSETS = ['index.html', 'manifest.webmanifest', 'gowingo-logo.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

@@ -1,0 +1,9 @@
+{
+  "appId": "com.gowingo.demo",
+  "appName": "GoWingo",
+  "webDir": "www",
+  "backgroundColor": "#29B6D8",
+  "android": {
+    "backgroundColor": "#29B6D8"
+  }
+}
